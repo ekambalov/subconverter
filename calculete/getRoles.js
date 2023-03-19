@@ -94,10 +94,16 @@ const srtConverter = (assSubs) => {
 
 (async () => {
   //making stream to get roles:
+  try {
+  } catch (error) {}
   const stream = fs.createReadStream(path.join(__dirname, "../", `roles.txt`), "utf-8");
   //get array with roles:
   let data = "";
   stream.on("data", (chunk) => (data += chunk));
+  stream.on("error", (error) => {
+    writeTofile("", `../roles.txt`);
+    console.log("ERROR! Check roles.txt file in root directory\nПАМЫЛКА! Праверце файл roles.txt у карневой папцы!");
+  });
   stream.on("end", () => {
     const roles = data
       .trim()
