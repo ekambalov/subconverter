@@ -2,6 +2,9 @@
 *.ass
 *.srt
 
+#ignoring test.js
+calculete/test.js
+
 # Logs
 logs
 *.log
