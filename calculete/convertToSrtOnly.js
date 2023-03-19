@@ -40,30 +40,6 @@ const rowCleaner = (arr) => {
   return newArr;
 };
 
-//function that get sub and return only rows with setting roles
-const getAssRoles = (sub, ...role) => {
-  if (!role[0]) return sub;
-  const subString = sub.toString();
-  const newSubs = rowCleaner(
-    subString.split("\n").map((row) => {
-      if (row.slice(0, 8) === "Dialogue") {
-        const newRow = row.split(",");
-        if (role.includes(newRow[4])) {
-          return row;
-        } else {
-          return "";
-        }
-      } else {
-        return row;
-      }
-    }),
-  )
-    .join("\n")
-    .trim();
-
-  return newSubs;
-};
-
 //convert ass to srt
 const srtConverter = (assSubs) => {
   //convert time from ass format to srt format
@@ -93,30 +69,16 @@ const srtConverter = (assSubs) => {
 //main code program
 
 (async () => {
-  //making stream to get roles:
-  const stream = fs.createReadStream(path.join(__dirname, "../", `roles.txt`), "utf-8");
-  //get array with roles:
-  let data = "";
-  stream.on("data", (chunk) => (data += chunk));
-  stream.on("end", () => {
-    const roles = data
-      .trim()
-      .split("\n")
-      .map((item) => item.trim());
+  const subNames = await getFiles(assPath); //getting all .ass filenames in array
 
-    (async () => {
-      const subNames = await getFiles(assPath); //getting all .ass filenames in array
-
-      //starting script for all .ass files
-      subNames.forEach((subName) => {
-        const stream = fs.createReadStream(path.join(__dirname, "../ass", `${subName}.ass`), "utf-8");
-        let data = "";
-        stream.on("data", (chunk) => (data += chunk));
-        stream.on("end", () => {
-          const subWithRoles = getAssRoles(data, ...roles);
-          writeTofile(srtConverter(subWithRoles), `../srt/${subName}.srt`);
-        });
-      });
-    })();
+  //starting script for all .ass files
+  subNames.forEach((subName) => {
+    const stream = fs.createReadStream(path.join(__dirname, "../ass", `${subName}.ass`), "utf-8");
+    let data = "";
+    stream.on("data", (chunk) => (data += chunk));
+    stream.on("end", () => {
+      const subWithRoles = data;
+      writeTofile(srtConverter(subWithRoles), `../srt/${subName}.srt`);
+    });
   });
 })();

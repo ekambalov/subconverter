@@ -1,1 +1,0 @@
-node calculete/index.js
