@@ -1,3 +1,7 @@
+# Ignoring .ass and .srt files
+*.ass
+*.srt
+
 # Logs
 logs
 *.log
