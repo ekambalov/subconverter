@@ -1,6 +1,7 @@
 # Ignoring .ass and .srt files
 *.ass
 *.srt
+*.txt
 
 #ignoring test.js
 calculete/test.js
