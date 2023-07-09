@@ -8,6 +8,17 @@ const { readdir, stat } = require("fs/promises");
 // finding our .ass directory
 const assPath = path.join(__dirname, "../ass");
 
+//replase orig in text to new symbols
+// I need to change all "S" in text to "symbol" so I nedd call textReplase(text, "S", "symbol") fx retrurn new text
+const textRepalce = (text, orig, rep) => {
+  if (text.indexOf(orig) !== -1) {
+    text = text.slice(0, text.indexOf(orig)) + rep + text.slice(text.indexOf(orig) + orig.length);
+
+    return textRepalce(text, orig, rep);
+  }
+  return text;
+};
+
 //function that get string and file directory and write string to file
 const writeTofile = (text, dir) => {
   const writeStream = fs.createWriteStream(path.join(__dirname, `${dir}`), "utf-8");
@@ -45,9 +56,8 @@ const srtConverter = (assSubs) => {
     let endTime = timeConverter(rowParam[2]);
     let text = `[${rowParam[4]}]:\n` + rowParam.slice(9).join(",");
     //changing \N to \n to separrate rows
-    if (text.indexOf("\\N") !== -1) {
-      text = text.slice(0, text.indexOf("\\N")) + "\n" + text.slice(text.indexOf("\\N") + 2);
-    }
+    text = textRepalce(text, "\\N", "\n");
+    text = textRepalce(text, "Ё", "ё");
     strRow.push(`${i + 1}\n${startTime} --> ${endTime}\n${text}\n`);
   }
   return strRow.join("\n");
